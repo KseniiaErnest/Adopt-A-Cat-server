@@ -42,7 +42,7 @@ Location.findById(req.params.locationId)
 // UPDATE
 router.put('/:locationId', (req, res, next) => {
  // Exclude 'cats' field from the update operation
- delete req.body.cats
+//  delete req.body.cats
 
   Location.findByIdAndUpdate(req.params.locationId, req.body, { new: true })
   .then((locationUpdate) => {

@@ -22,7 +22,6 @@ const userSchema = new Schema(
     },
     fullName: String,
     role: { type: String, enum: ['Adopter', 'Cat Owner'], required: true },
-    location: { type: Schema.Types.ObjectId, ref: 'Location' }
   },
   {
     timestamps: true,

@@ -7,13 +7,42 @@ const Location = require('../models/Location.model');
 
 // CREATE
 router.post('/', (req, res, next) => {
-  Cat.create(req.body)
-  .then((cat) => {
-    res.json({ success: true, cat });
-  })
-  .catch((err) => {
-    res.json({ success: false, error: err });
-  });
+  const { name, age, breed, gender, color, description, availability, images, dateOfEntry, location } = req.body;
+
+  // Check if the provided location ID exists in the database
+  Location.findById(location)
+    .then(existingLocation => {
+      if (!existingLocation) {
+        return res.json({ success: false, error: "Location not found" });
+      }
+
+      // Create the cat and associate it with the location
+      Cat.create({
+        name,
+        age,
+        breed,
+        gender,
+        color,
+        description,
+        availability,
+        images,
+        dateOfEntry,
+        location: existingLocation._id, // Assign the location ID to the cat's location field
+      })
+      .then(cat => {
+        // Associate the created cat with the location
+        existingLocation.cats.push(cat._id);
+        existingLocation.save();
+
+        res.json({ success: true, cat });
+      })
+      .catch(err => {
+        res.json({ success: false, error: err });
+      });
+    })
+    .catch(err => {
+      res.json({ success: false, error: err });
+    });
 });
 
 // READ ALL
@@ -42,8 +71,6 @@ Cat.findById(req.params.catId)
 
 // UPDATE
 router.put('/:catId', (req, res, next) => {
- // Exclude 'location' field from the update operation
- delete req.body.location
 
   Cat.findByIdAndUpdate(req.params.catId, req.body, { new: true })
   .then((catupdate) => {
@@ -53,6 +80,7 @@ router.put('/:catId', (req, res, next) => {
     res.json({ success: false, error: err });
   });
 });
+
 
 // DELETE
 router.delete('/:catId', (req, res, next) => {

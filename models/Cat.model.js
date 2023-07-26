@@ -3,14 +3,14 @@ const { Schema, model } = require('mongoose');
 const catSchema = new Schema(
   {
     name: { type: String, required: true },
-    age: { type: Date, required: true },
+    age: { type: Date },
     breed: String,
     gender: { type: String, enum: ['Male', 'Female', 'Unknown'], required: true },
     color: String,
     description: String,
-    availability: { type: String, enum: ['Available', 'Adopted', 'Pending'], default: 'Available' },
-    images: [{ type: String, required: true }],
-    dateOfEntry: { type: Date, required: true },
+    availability: { type: String, enum: ['Available', 'Adopted', 'Pending'] },
+    images: [{ type: String}],
+    dateOfEntry: { type: Date },
     location: { type: Schema.Types.ObjectId, ref: 'Location' },
 },
 {

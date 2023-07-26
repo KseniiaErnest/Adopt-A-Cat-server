@@ -20,7 +20,8 @@ const locationSchema = new Schema(
     openingHours: String,
     website: String,
     description: String,
-    cats: [{ type: Schema.Types.ObjectId, ref: 'Cat' }]
+    cats: [{ type: Schema.Types.ObjectId, ref: 'Cat' }],
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' }
 },
 {
   timestamps: true,
