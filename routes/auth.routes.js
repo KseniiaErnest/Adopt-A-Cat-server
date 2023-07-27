@@ -102,17 +102,33 @@ router.post("/login", (req, res, next) => {
         // Deconstruct the user object to omit the password
         const { _id, email, username, fullName, role } = foundUser;
 
+
+// Create an object that will be set as the token payload
+const payload = { _id, email, username, fullName, role };
+ 
+// Create and sign the token
+const authToken = jwt.sign( 
+  payload,
+  process.env.TOKEN_SECRET,
+  { algorithm: 'HS256', expiresIn: "6h" }
+);
+
+//////////////////////////////////////////////
 //Save the user in session
-req.session.currentUser = {
-  _id,
-  email,
-  username,
-  fullName,
-  role
-};
+// req.session.currentUser = {
+//   _id,
+//   email,
+//   username,
+//   fullName,
+//   role
+// };
+///////////////////////////////////////////////
 
         // Send a success response
-        res.status(200).json({ user: req.session.currentUser });
+        // res.status(200).json({ user: req.session.currentUser });
+
+         // Send the token as the response
+        res.status(200).json({ authToken: authToken });
       } else {
         res.status(401).json({ message: "Unable to authenticate the user" });
       }
@@ -120,14 +136,35 @@ req.session.currentUser = {
     .catch((err) => next(err)); // In this case, we send error handling to the error handling middleware.
 });
 
-// GET  /auth/verify  -  Used to verify JWT stored on the client
-router.get("/verify", isAuthenticated, (req, res, next) => {
-  // If JWT token is valid the payload gets decoded by the
-  // isAuthenticated middleware and is made available on `req.payload`
-  console.log(`req.payload`, req.payload);
+// ////////
+// router.get('/checkLoggedIn', (req, res, next) => {
+//   if (req.session.currentUser) {
+//     // If the user is logged in, send the user data in the response
+//     res.status(200).json({ user: req.session.currentUser });
+//   } else {
+//     // If the user is not logged in, send an error response
+//     res.status(401).json({ message: "User not logged in." });
+//   }
+// });
 
-  // Send back the token payload object containing the user data
+// GET  /auth/verify  -  Used to verify JWT stored on the client
+router.get('/verify', isAuthenticated, (req, res, next) => {
+ 
+  // If JWT token is valid the payload gets decoded by the
+  // isAuthenticated middleware and made available on `req.payload`
+  console.log(`req.payload`, req.payload);
+ 
+  // Send back the object with user data
+  // previously set as the token payload
   res.status(200).json(req.payload);
 });
+
+// LOGOUT POST route
+// router.post('/logout', (req, res, next) => {
+//   console.log(req.session);
+//   req.session.destroy();
+//   res.status(200).json({ message: "Logout successful." })
+
+// });
 
 module.exports = router;

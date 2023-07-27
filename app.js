@@ -9,6 +9,8 @@ require("./db");
 // https://www.npmjs.com/package/express
 const express = require("express");
 
+const { isAuthenticated } = require('./middleware/jwt.middleware')
+
 const app = express();
 
 require('./config/session.config')(app);
@@ -24,10 +26,10 @@ const authRoutes = require("./routes/auth.routes");
 app.use("/auth", authRoutes);
 
 const catRoutes = require('./routes/cat.routes');
-app.use('/cats', catRoutes);
+app.use('/cats', isAuthenticated, catRoutes);
 
 const locationRoutes = require('./routes/location.routes');
-app.use('/locations', locationRoutes);
+app.use('/locations', isAuthenticated, locationRoutes);
 
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
 require("./error-handling")(app);
