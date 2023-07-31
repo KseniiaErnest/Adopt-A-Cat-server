@@ -1,19 +1,40 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require('mongoose');
+const jwt = require("jsonwebtoken");
 
 const Location = require('../models/Location.model');
 const Cat = require('../models/Cat.model');
 
 // CREATE
 router.post('/', (req, res, next) => {
-  Location.create(req.body)
-  .then((locationt) => {
-    res.json({ success: true, locationt });
-  })
-  .catch((err) => {
-    res.json({ success: false, error: err });
-  });
+// Get the JWT token from the request headers
+const token = req.headers.authorization.split(' ')[1];
+
+// Decode the token to get the user's ID
+const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
+
+// Extract the user's ID from the decoded token
+const userId = decodedToken._id;
+
+  // Add the createdBy field to the location data
+  const locationData = { ...req.body, createdBy: userId };
+
+  Location.create(locationData)
+    .then((location) => {
+      res.json({ success: true, location });
+    })
+    .catch((err) => {
+      res.json({ success: false, error: err });
+    });
+
+  // Location.create(req.body)
+  // .then((locationt) => {
+  //   res.json({ success: true, locationt });
+  // })
+  // .catch((err) => {
+  //   res.json({ success: false, error: err });
+  // });
 });
 
 // READ ALL

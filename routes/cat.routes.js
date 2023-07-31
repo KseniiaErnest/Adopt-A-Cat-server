@@ -7,7 +7,11 @@ const Location = require('../models/Location.model');
 
 // CREATE
 router.post('/', (req, res, next) => {
-  const { name, age, breed, gender, color, description, availability, images, dateOfEntry, location } = req.body;
+  // Check if the 'species' field is provided in the request body
+  const { name, age, breed, gender, color, description, availability, images, dateOfEntry, location, species } = req.body;
+if (!species || (species !== 'Cat' && species !== 'Dog')) {
+  return res.json({ success: false, error: "Invalid species. Must be 'Cat' or 'Dog'. " });
+};
 
   // Check if the provided location ID exists in the database
   Location.findById(location)
@@ -16,8 +20,9 @@ router.post('/', (req, res, next) => {
         return res.json({ success: false, error: "Location not found" });
       }
 
-      // Create the cat and associate it with the location
+      // Create the cat or dog and associate it with the location
       Cat.create({
+        species,
         name,
         age,
         breed,
@@ -47,7 +52,11 @@ router.post('/', (req, res, next) => {
 
 // READ ALL
 router.get('/', (req, res, next) => {
-  Cat.find()
+  // Check if the 'species' query parameter is provided
+  const { species } = req.query;
+  // If species is provided, filter by species; otherwise, get all cats and dogs
+  const query = species ? { species } : {};
+  Cat.find(query)
   .populate('location')
   .then((allCats) => {
     res.json({ success: true, allCats });
@@ -58,8 +67,12 @@ router.get('/', (req, res, next) => {
 });
 
 // READ ONE
-router.get('/:catId', (req, res, next) => {
-Cat.findById(req.params.catId)
+router.get('/:petId', (req, res, next) => {
+const petId = req.params.petId;
+// Get the species value from the query parameters
+const species = req.query.species;
+
+Cat.findOne({ _id: petId, species: species })
 .populate('location')
 .then((oneCat) => {
   res.json({ success: true, oneCat });
@@ -70,11 +83,17 @@ Cat.findById(req.params.catId)
 });
 
 // UPDATE
-router.put('/:catId', (req, res, next) => {
+router.put('/:petId', (req, res, next) => {
+  const petId = req.params.petId;
+  // Get the species value from the query parameters
+  const species = req.query.species;
 
-  Cat.findByIdAndUpdate(req.params.catId, req.body, { new: true })
-  .then((catupdate) => {
-    res.json({ success: true, catupdate });
+  // Merge the species field into the update data
+  const updateData = { ...req.body, species: species };
+
+  Cat.findByIdAndUpdate(petId, updateData, { new: true })
+  .then((catUpdate) => {
+    res.json({ success: true, catUpdate });
   })
   .catch((err) => {
     res.json({ success: false, error: err });
@@ -83,10 +102,14 @@ router.put('/:catId', (req, res, next) => {
 
 
 // DELETE
-router.delete('/:catId', (req, res, next) => {
-  Cat.findByIdAndRemove(req.params.catId)
+router.delete('/:petId', (req, res, next) => {
+  const petId = req.params.petId;
+  // Get the species value from the query parameters
+  const species = req.query.species;
+
+  Cat.findOneAndRemove({ _id: petId, species: species })
   .then(() => {
-    res.json({ success: true, message: 'Successfully removed cat' })
+    res.json({ success: true, message: 'Successfully removed a pet' })
   })
   .catch((err) => {
     res.json({ success: false, error: err });

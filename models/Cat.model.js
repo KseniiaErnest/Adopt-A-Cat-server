@@ -12,6 +12,7 @@ const catSchema = new Schema(
     images: [{ type: String}],
     dateOfEntry: { type: Date },
     location: { type: Schema.Types.ObjectId, ref: 'Location' },
+    species: { type: String, enum: ['Cat', 'Dog'], required: true },
 },
 {
   timestamps: true,
