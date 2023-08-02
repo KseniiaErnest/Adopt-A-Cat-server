@@ -204,15 +204,64 @@ Cat.findById(req.params.catId)
 });
 
 // UPDATE
-router.put('/:catId', (req, res, next) => {
+// router.put('/:catId', (req, res, next) => {
 
-  Cat.findByIdAndUpdate(req.params.catId, req.body, { new: true })
-  .then((catupdate) => {
-    res.json({ success: true, catupdate });
+//   Cat.findByIdAndUpdate(req.params.catId, req.body, { new: true })
+//   .then((catupdate) => {
+//     res.json({ success: true, catupdate });
+//   })
+//   .catch((err) => {
+//     res.json({ success: false, error: err });
+//   });
+// });
+
+router.put('/:catId', (req, res, next) => {
+  const { name, age, breed, gender, color, description, availability, dateOfEntry, location } = req.body;
+
+  // Find the cat by ID
+  Cat.findById(req.params.catId)
+  .then((catToUpdate) => {
+    catToUpdate.name = name;
+    catToUpdate.age = age;
+    catToUpdate.breed = breed;
+    catToUpdate.gender = gender;
+    catToUpdate.color = color;
+    catToUpdate.description = description;
+    catToUpdate.availability = availability;
+    catToUpdate.dateOfEntry = dateOfEntry;
+    catToUpdate.location = location;
+
+      return catToUpdate.save();
+  })
+  .then((updatedCat) => {
+    res.json({ success: true, catToUpdate: updatedCat });
   })
   .catch((err) => {
     res.json({ success: false, error: err });
   });
+});
+
+// UPDATE Images
+router.patch('/:catId', uploadImage.array('images', 5), (req, res, next) => {
+  console.log({ theFile: req.files });
+
+  Cat.findById(req.params.catId)
+  .then((catFromDB) => {
+    console.log(catFromDB);
+    req.files.forEach((file) => {
+      catFromDB.images.push(file.path);
+    });
+    catFromDB.save()
+    .then((updatedCat) => {
+      console.log( {updatedCat} );
+      res.status(200).json(updatedCat);
+    })
+    .catch((err) => res.status(400).json({ message: 'error pushing files:', err })
+    );
+  })
+  .catch((err) => res.status(400).json({ message: 'error finding cat:', err })
+  );
+  
 });
 
 // DELETE

@@ -113,20 +113,6 @@ const authToken = jwt.sign(
   { algorithm: 'HS256', expiresIn: "6h" }
 );
 
-//////////////////////////////////////////////
-//Save the user in session
-// req.session.currentUser = {
-//   _id,
-//   email,
-//   username,
-//   fullName,
-//   role
-// };
-///////////////////////////////////////////////
-
-        // Send a success response
-        // res.status(200).json({ user: req.session.currentUser });
-
          // Send the token as the response
         res.status(200).json({ authToken: authToken });
       } else {
@@ -136,16 +122,6 @@ const authToken = jwt.sign(
     .catch((err) => next(err)); // In this case, we send error handling to the error handling middleware.
 });
 
-// ////////
-// router.get('/checkLoggedIn', (req, res, next) => {
-//   if (req.session.currentUser) {
-//     // If the user is logged in, send the user data in the response
-//     res.status(200).json({ user: req.session.currentUser });
-//   } else {
-//     // If the user is not logged in, send an error response
-//     res.status(401).json({ message: "User not logged in." });
-//   }
-// });
 
 // GET  /auth/verify  -  Used to verify JWT stored on the client
 router.get('/verify', isAuthenticated, (req, res, next) => {
@@ -159,12 +135,5 @@ router.get('/verify', isAuthenticated, (req, res, next) => {
   res.status(200).json(req.payload);
 });
 
-// LOGOUT POST route
-// router.post('/logout', (req, res, next) => {
-//   console.log(req.session);
-//   req.session.destroy();
-//   res.status(200).json({ message: "Logout successful." })
-
-// });
 
 module.exports = router;
