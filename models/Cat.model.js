@@ -2,10 +2,10 @@ const { Schema, model } = require('mongoose');
 
 const catSchema = new Schema(
   {
-    name: { type: String, required: true },
+    name: { type: String },
     age: { type: Date },
     breed: String,
-    gender: { type: String, enum: ['Male', 'Female', 'Unknown'], required: true },
+    gender: { type: String, enum: ['Male', 'Female', 'Unknown'] },
     color: String,
     description: String,
     availability: { type: String, enum: ['Available', 'Adopted', 'Pending'] },

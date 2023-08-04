@@ -26,7 +26,7 @@ const authRoutes = require("./routes/auth.routes");
 app.use("/auth", authRoutes);
 
 const catRoutes = require('./routes/cat.routes');
-app.use('/cats', /* isAuthenticated , */ catRoutes);
+app.use('/cats', isAuthenticated, catRoutes);
 
 const locationRoutes = require('./routes/location.routes');
 app.use('/locations', isAuthenticated, locationRoutes);

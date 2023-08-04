@@ -142,7 +142,7 @@ router.post('/', uploadImage.array('images', 5), (req, res, next) => {
   const { name, age, breed, gender, color, description, availability, dateOfEntry, location, } = req.body;
   const images = req.files.map(file => file.path);
 
-
+console.log( {body: req.body});
   // Check if the provided location ID exists in the database
   Location.findById(location)
     .then(existingLocation => {
@@ -216,7 +216,8 @@ Cat.findById(req.params.catId)
 // });
 
 router.put('/:catId', (req, res, next) => {
-  const { name, age, breed, gender, color, description, availability, dateOfEntry, location } = req.body;
+  const { name, age, breed, gender, color, description, availability, dateOfEntry, /* location */ } = req.body;
+  console.log(req.body);
 
   // Find the cat by ID
   Cat.findById(req.params.catId)
@@ -229,7 +230,7 @@ router.put('/:catId', (req, res, next) => {
     catToUpdate.description = description;
     catToUpdate.availability = availability;
     catToUpdate.dateOfEntry = dateOfEntry;
-    catToUpdate.location = location;
+    // catToUpdate.location = location;
 
       return catToUpdate.save();
   })
