@@ -143,7 +143,8 @@ router.post('/', uploadImage.array('images', 5), (req, res, next) => {
   const images = req.files.map(file => file.path);
 
 console.log( {body: req.body});
-  // Check if the provided location ID exists in the database
+  // Check if the provided location ID exists in the database 
+  console.log({bosy: req.body});
   Location.findById(location)
     .then(existingLocation => {
       if (!existingLocation) {
@@ -164,6 +165,7 @@ console.log( {body: req.body});
         location: existingLocation._id, // Assign the location ID to the cat's location field
       })
       .then(cat => {
+        console.log(cat);
         // Associate the created cat with the location
         existingLocation.cats.push(cat._id);
         existingLocation.save();
@@ -264,6 +266,39 @@ router.patch('/:catId', uploadImage.array('images', 5), (req, res, next) => {
   );
   
 });
+
+
+router.patch('/:catId/deleteimages', (req, res, next) => {
+  const { images } = req.body;
+  console.log(req.body);
+
+  Cat.findByIdAndUpdate(req.params.catId, { $pull: { images: { $in: images } } },
+    {new: true} 
+    )
+    .then((updatedCat) => {
+      res.json({ success: true, updatedCat });
+    })
+    .catch((err) => {
+      res.json({ success: false, error: err });
+    });
+
+} );
+
+// DELETE IMAGES ON UPDATE
+// router.delete('/:catId/images', (req, res, next) => {
+//   const { images } = req.body;
+//   console.log(req.body);
+
+//   Cat.findByIdAndDelete(req.params.catId, { $pull: { images: { $in: images } } },
+//     {new: true} 
+//     )
+//     .then((updatedCat) => {
+//       res.json({ success: true, updatedCat });
+//     })
+//     .catch((err) => {
+//       res.json({ success: false, error: err });
+//     });
+// });
 
 // DELETE
 router.delete('/:catId', (req, res, next) => {
