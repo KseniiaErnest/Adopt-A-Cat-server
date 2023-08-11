@@ -22,6 +22,7 @@ const userSchema = new Schema(
     },
     fullName: String,
     role: { type: String, enum: ['Adopter', 'Cat Owner'], required: true },
+    preferredSpecies: { type: String, enum: ['Cat', 'Dog'], default: 'Cat' },
   },
   {
     timestamps: true,

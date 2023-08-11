@@ -135,5 +135,27 @@ router.get('/verify', isAuthenticated, (req, res, next) => {
   res.status(200).json(req.payload);
 });
 
+// Update user profile
+router.put('/:userId', (req, res, next) => {
+  const {username, fullName, preferredSpecies} = req.body;
+
+  User.findByIdAndUpdate(req.params.userId)
+  .then((UserToUpdate) => {
+    UserToUpdate.username = username;
+    UserToUpdate.fullName = fullName;
+    UserToUpdate.preferredSpecies = preferredSpecies;
+
+    return UserToUpdate.save();
+  })
+  .then((updatedUser) => {
+    res.json({ success: true, UserToUpdate: updatedUser });
+  })
+  .catch((err) => {
+    res.json({ success: false, error: err });
+  });
+});
+
 
 module.exports = router;
+
+
