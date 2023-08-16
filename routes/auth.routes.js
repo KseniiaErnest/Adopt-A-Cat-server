@@ -133,8 +133,8 @@ router.get('/verify', isAuthenticated, (req, res, next) => {
  
   // Send back the object with user data
   // previously set as the token payload
-  // res.status(200).json(req.payload);
-  res.status(200).json({ payload: req.payload, user: req.user } );
+  res.status(200).json(req.payload);
+  // res.status(200).json({ payload: req.payload, user: req.user } );
 
 });
 
