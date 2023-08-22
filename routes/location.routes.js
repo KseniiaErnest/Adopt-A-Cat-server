@@ -28,13 +28,6 @@ const userId = decodedToken._id;
       res.json({ success: false, error: err });
     });
 
-  // Location.create(req.body)
-  // .then((locationt) => {
-  //   res.json({ success: true, locationt });
-  // })
-  // .catch((err) => {
-  //   res.json({ success: false, error: err });
-  // });
 });
 
 // READ ALL
@@ -62,8 +55,6 @@ Location.findById(req.params.locationId)
 
 // UPDATE
 router.put('/:locationId', (req, res, next) => {
- // Exclude 'cats' field from the update operation
-//  delete req.body.cats
 
   Location.findByIdAndUpdate(req.params.locationId, req.body, { new: true })
   .then((locationUpdate) => {
