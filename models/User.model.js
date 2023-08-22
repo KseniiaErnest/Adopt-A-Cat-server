@@ -21,7 +21,8 @@ const userSchema = new Schema(
       required: [true, 'Password is required.']
     },
     fullName: String,
-    role: { type: String, enum: ['Adopter', 'Cat Owner'] },
+    role: { type: String, enum: ['Adopter', 'Cat Owner'], required: true },
+    preferredSpecies: { type: String, enum: ['Cat', 'Dog'], default: 'Cat' },
   },
   {
     timestamps: true,

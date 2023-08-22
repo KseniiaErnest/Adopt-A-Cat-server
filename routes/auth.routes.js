@@ -101,11 +101,11 @@ router.post("/login", (req, res, next) => {
 
       if (passwordCorrect) {
         // Deconstruct the user object to omit the password
-        const { _id, email, username, fullName, role } = foundUser;
+        const { _id, email, username, fullName, role, preferredSpecies } = foundUser;
 
 
 // Create an object that will be set as the token payload
-const payload = { _id, email, username, fullName, role };
+const payload = { _id, email, username, fullName, role, preferredSpecies };
  
 // Create and sign the token
 const authToken = jwt.sign( 
@@ -130,11 +130,38 @@ router.get('/verify', isAuthenticated, (req, res, next) => {
   // If JWT token is valid the payload gets decoded by the
   // isAuthenticated middleware and made available on `req.payload`
   console.log(`req.payload`, req.payload);
+  console.log({userOne: req.user})
  
   // Send back the object with user data
   // previously set as the token payload
   res.status(200).json(req.payload);
+  // res.status(200).json({ payload: req.payload, user: req.user } );
+
+});
+
+// Update user profile
+router.put('/:userId', (req, res, next) => {
+  const {username, fullName, preferredSpecies} = req.body;
+
+  User.findByIdAndUpdate(req.params.userId, 
+    {new: true}
+    )
+  .then((UserToUpdate) => {
+    UserToUpdate.username = username;
+    UserToUpdate.fullName = fullName;
+    UserToUpdate.preferredSpecies = preferredSpecies;
+
+    return UserToUpdate.save();
+  })
+  .then((updatedUser) => {
+    res.json({ success: true, UserToUpdate: updatedUser });
+  })
+  .catch((err) => {
+    res.json({ success: false, error: err });
+  });
 });
 
 
 module.exports = router;
+
+
