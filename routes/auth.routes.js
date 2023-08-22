@@ -21,24 +21,25 @@ const saltRounds = 10;
 // POST /auth/signup  - Creates a new user in the database
 router.post("/signup", (req, res, next) => {
   const { email, password, username, fullName, role } = req.body;
+  console.log({signupBody: req.body});
 
   // Check if email or password or name are provided as empty strings
   if (email === "" || password === "" || username === "") {
-    res.status(400).json({ message: "Provide email, password and name" });
+    res.json({ message: "Provide email, password and name" });
     return;
   }
 
   // This regular expression check that the email is of a valid format
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   if (!emailRegex.test(email)) {
-    res.status(400).json({ message: "Provide a valid email address." });
+    res.json({ message: "Provide a valid email address." });
     return;
   }
 
   // This regular expression checks password for special characters and minimum length
   const passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
   if (!passwordRegex.test(password)) {
-    res.status(400).json({
+    res.json({
       message:
         "Password must have at least 6 characters and contain at least one number, one lowercase and one uppercase letter.",
     });
@@ -50,7 +51,7 @@ router.post("/signup", (req, res, next) => {
     .then((foundUser) => {
       // If the user with the same email already exists, send an error response
       if (foundUser) {
-        res.status(400).json({ message: "User already exists." });
+        res.json({ message: "User already exists." });
         return;
       }
 
